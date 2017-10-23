@@ -11,14 +11,32 @@ class Calculator extends React.Component {
   }
 
   inputDigit = digit => {
+    const { displayValue } = this.state
+
     this.setState({
-      displayValue: (this.state.displayValue != '0') ? this.state.displayValue + String(digit) : String(digit)
+      displayValue: (this.state.displayValue != '0') ? displayValue + String(digit) : String(digit)
     })
   }
 
   clearDisplay = () => {
     this.setState({
       displayValue: '0'
+    })
+  }
+
+  changeSign = () => {
+    const { displayValue } = this.state
+
+    this.setState({
+      displayValue: (this.state.displayValue > 0) ? `-${displayValue}` : Math.abs(displayValue)
+    })
+  }
+
+  addDot = () => {
+    const { displayValue } = this.state
+
+    this.setState({
+      displayValue: (displayValue.indexOf('.') === -1) ? displayValue + '.' : displayValue
     })
   }
 
@@ -32,12 +50,12 @@ class Calculator extends React.Component {
           <div className="input-keys">
             <div className="function-keys">
               <button className="calculator-key key-clear" onClick={() => this.clearDisplay()}>AC</button>
-              <button className="calculator-key key-sign">±</button>
+              <button className="calculator-key key-sign" onClick={() => this.changeSign()}>±</button>
               <button className="calculator-key key-percent">%</button>
             </div>
             <div className="digit-keys">
               <button className="calculator-key key-0" onClick={() => this.inputDigit(0)}>0</button>
-              <button className="calculator-key key-dot">●</button>
+              <button className="calculator-key key-dot" onClick={() => this.addDot()}>●</button>
               <button className="calculator-key key-1" onClick={() => this.inputDigit(1)}>1</button>
               <button className="calculator-key key-2" onClick={() => this.inputDigit(2)}>2</button>
               <button className="calculator-key key-3" onClick={() => this.inputDigit(3)}>3</button>
