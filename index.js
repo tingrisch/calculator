@@ -7,20 +7,59 @@ import './styles.css';
 
 class Calculator extends React.Component {
   state = {
-    displayValue: '0'
+    displayValue: '0',
+    waitingForOperation: false,
+    operator: null,
+    operationDigit: null
+  }
+
+  computeResult = () => {
+    const { displayValue, waitingForOperation, operator, operationDigit } = this.state
+    let result = null
+
+    switch(operator) {
+      case '+':
+        result = Number(operationDigit) + Number(displayValue)
+        break
+      case '-':
+        result = Number(operationDigit) - Number(displayValue)
+        break
+      case '/':
+        result = Number(operationDigit) / Number(displayValue)
+        break
+      case '*':
+        result = Number(operationDigit) * Number(displayValue)
+        break
+    }
+
+    this.setState({
+      displayValue: String(result)
+    })
   }
 
   inputDigit = digit => {
-    const { displayValue } = this.state
+    const { displayValue, waitingForOperation, operator, operationDigit } = this.state
+    let result = null
+    let oldDigit = null
+    
+    if (waitingForOperation === true) {
+      result = digit
+      oldDigit = displayValue
+    } else {
+      result = (displayValue !== '0') ? displayValue + String(digit) : String(digit)
+    }
 
     this.setState({
-      displayValue: (this.state.displayValue != '0') ? displayValue + String(digit) : String(digit)
+      displayValue: result,
+      operationDigit: oldDigit
     })
   }
 
   clearDisplay = () => {
     this.setState({
-      displayValue: '0'
+      displayValue: '0',
+      waitingForOperation: false,
+      operator: null
     })
   }
 
@@ -40,8 +79,16 @@ class Calculator extends React.Component {
     })
   }
 
+  doOperation = (operator) => {
+    this.setState({
+      waitingForOperation: true,
+      operator: operator
+    })
+  }
+
   render() {
     const { displayValue } = this.state;
+    console.log(this.state);
 
     return (
       <div className="calculator">
@@ -68,11 +115,11 @@ class Calculator extends React.Component {
             </div>
           </div>
           <div className="operator-keys">
-            <button className="calculator-key key-divide">÷</button>
-            <button className="calculator-key key-multiply">×</button>
-            <button className="calculator-key key-subtract">−</button>
-            <button className="calculator-key key-add">+</button>
-            <button className="calculator-key key-equals">=</button>
+            <button className="calculator-key key-divide" onClick={() => this.doOperation('/')}>÷</button>
+            <button className="calculator-key key-multiply" onClick={() => this.doOperation('*')}>×</button>
+            <button className="calculator-key key-subtract" onClick={() => this.doOperation('-')}>−</button>
+            <button className="calculator-key key-add" onClick={() => this.doOperation('+')}>+</button>
+            <button className="calculator-key key-equals" onClick={() => this.computeResult()}>=</button>
           </div>
         </div>
       </div>
